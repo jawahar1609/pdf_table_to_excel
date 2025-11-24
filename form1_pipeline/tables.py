@@ -3,6 +3,15 @@ import pdfplumber
 import pandas as pd
 from .utils import get_page_rotation
 
+FORM1_TABLE_KEYWORDS = [
+    "ASSET DESCRIPTION",
+    "PETITION/ UNSCHEDULED",
+    "ESTIMATED NET VALUE",
+    "PROPERTY ABANDONED",
+    "SALE/FUNDS"
+]
+
+
 def extract_form1_table(pdf_path, page_number, logger):
     """
     Extracts table from a single page using multiple methods.
@@ -23,7 +32,23 @@ def extract_form1_table(pdf_path, page_number, logger):
 
     page_str = str(page_number + 1)  # Camelot uses 1-indexed pages
 
-    # # Method 1: Camelot Stream (best for borderless tables)
+    # Method 1: Camelot Lattice (best for bordered tables)
+    try:
+        logger.info("Trying Camelot (lattice)...")
+        tables = camelot.read_pdf(
+            pdf_path, 
+            pages=page_str, 
+            flavor="lattice"
+        )
+
+        if tables.n > 0 and not tables[0].df.empty:
+            df = tables[0].df
+            logger.info(f"✅ Camelot lattice: {df.shape[0]} rows, {df.shape[1]} cols")
+            return df, "camelot_lattice"
+    except Exception as e:
+        logger.debug(f"Camelot lattice failed: {e}")
+        
+    # # Method 2: Camelot Stream (best for borderless tables)
     try:
         logger.info("Trying Camelot (stream)...")
         tables = camelot.read_pdf(
@@ -36,26 +61,10 @@ def extract_form1_table(pdf_path, page_number, logger):
 
         if tables.n > 0 and not tables[0].df.empty:
             df = tables[0].df
-            logger.info(f"âœ… Camelot stream: {df.shape[0]} rows, {df.shape[1]} cols")
+            logger.info(f"✅ Camelot stream: {df.shape[0]} rows, {df.shape[1]} cols")
             return df, "camelot_stream"
     except Exception as e:
         logger.debug(f"Camelot stream failed: {e}")
-
-    # Method 2: Camelot Lattice (best for bordered tables)
-    # try:
-    #     logger.info("Trying Camelot (lattice)...")
-    #     tables = camelot.read_pdf(
-    #         pdf_path, 
-    #         pages=page_str, 
-    #         flavor="lattice"
-    #     )
-
-    #     if tables.n > 0 and not tables[0].df.empty:
-    #         df = tables[0].df
-    #         logger.info(f"Camelot lattice: {df.shape[0]} rows, {df.shape[1]} cols")
-    #         return df, "camelot_lattice"
-    # except Exception as e:
-    #     logger.debug(f"Camelot lattice failed: {e}")
 
     # Method 3: pdfplumber (fallback)
     # try:
@@ -66,10 +75,10 @@ def extract_form1_table(pdf_path, page_number, logger):
 
     #         if table and len(table) > 0:
     #             df = pd.DataFrame(table)
-    #             logger.info(f"pdfplumber: {df.shape[0]} rows, {df.shape[1]} cols")
+    #             logger.info(f"✅ pdfplumber: {df.shape[0]} rows, {df.shape[1]} cols")
     #             return df, "pdfplumber"
     # except Exception as e:
     #     logger.debug(f"pdfplumber failed: {e}")
 
-    logger.error(f"All extraction methods failed for page {page_number + 1}")
+    logger.error(f"❌ All extraction methods failed for page {page_number + 1}")
     return None, None

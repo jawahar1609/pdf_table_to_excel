@@ -45,20 +45,18 @@ for file in os.listdir(PDF_FOLDER):
                 all_dfs.append(df)
 
         if not all_dfs:
-            logger.warning(f"âŒ Pages found, but no table data extracted for {file}")
+            logger.warning(f"❌ Pages found, but no table data extracted for {file}")
             log_entries.append({"filename": file, "status": "FAILED (Extraction)"})
             continue
 
         # STEP 3: Combine and Write to Excel
         final_df = pd.concat(all_dfs, ignore_index=True)
-        if "ASSET DESCRIPTION" in final_df.columns:
-            final_df = final_df[final_df["ASSET DESCRIPTION"] != "ASSET DESCRIPTION"]
         final_df = final_df.dropna(how='all').reset_index(drop=True)
 
         output_path = os.path.join(OUTPUT_FOLDER, f"{filename_clean}.xlsx")
         final_df.to_excel(output_path, index=False, sheet_name="Form 1 Data")
         
-        logger.info(f"âœ… Saved to: {output_path}")
+        logger.info(f"✅ Saved to: {output_path}")
 
         # STEP 4: Log Success
         log_entries.append({

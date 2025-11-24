@@ -1,8 +1,6 @@
 import re
-import fitz 
-import pytesseract
-from PIL import Image
-import io
+import fitz  # PyMuPDF
+
 
 def get_page_rotation(pdf_path, page_number):
     """
@@ -20,6 +18,5 @@ def normalize_text(text):
     text = text.upper()
     text = re.sub(r"\s+", " ", text)
     return text.strip()
-
 
 

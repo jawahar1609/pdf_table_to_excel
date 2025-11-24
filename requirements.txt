@@ -1,0 +1,23 @@
+
+# Core PDF handling
+pdfplumber==0.11.4
+PyMuPDF==1.24.10
+
+# Table extraction
+camelot-py==0.11.0
+
+# Data handling & Excel
+pandas==2.2.2
+xlsxwriter==3.2.0
+
+
+# Image processing
+opencv-python==4.10.0.84
+pytesseract
+Pillow
+
+# Excel support
+openpyxl
+
+# Optional but useful
+numpy==1.26.4

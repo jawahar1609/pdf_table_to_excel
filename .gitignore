@@ -1,0 +1,55 @@
+# PDF Data Files
+data/
+*.pdf
+
+# Output Files
+output/
+*.xlsx
+*.xls
+
+# Log Files
+*.log
+extraction_log.csv
+
+# OCR Related
+debug_locator/
+test_ocr.py
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Virtual Environment
+pdf_extract/
